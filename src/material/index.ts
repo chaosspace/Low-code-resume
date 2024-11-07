@@ -7,3 +7,10 @@ export const MaterialConfig = [
 	{ name: "Card", component: Card },
 	{ name: "Row", component: Row },
 ];
+
+export const AddableCompMap = {
+	WorkSpace: ["Row", "Span"],
+	Card: ["Row", "Span"],
+	Row: ["Text", "Span"],
+	Span: ["Text"],
+};
