@@ -1,6 +1,7 @@
 import prompts from "prompts";
-import { statSync, mkdirSync, w } from "node:fs";
 import path from "node:path";
+import { isDirExist } from "./helper.mjs";
+import { generateComp } from "./generateComp.mjs";
 
 const { materialName } = await prompts({
 	type: "text",
@@ -23,13 +24,4 @@ if (await isDirExist(destination)) {
 	process.exit(1);
 }
 
-mkdirSync(destination);
-
-
-async function isDirExist(name) {
-	try {
-		return !!statSync(name);
-	} catch (error) {
-		return false;
-	}
-}
+generateComp(fileName, destination);
