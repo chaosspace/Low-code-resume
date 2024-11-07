@@ -1,5 +1,5 @@
 import styles from "./sidePane.module.less";
-import { MaterialConfig } from "../../materiel";
+import { MaterialConfig } from "../../material";
 
 export const SidePane = () => {
 	return (
