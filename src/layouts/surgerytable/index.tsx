@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import styles from "./surgerytable.module.less";
-import { useWorkStore } from "@/store";
+import { useWorkingStore } from "@/store";
 
 export const SurgeryTable = () => {
-	const workingComp = useWorkStore((store) => store.currentWorkingComp);
-	console.log("render");
+	const workingComp = useWorkingStore();
 
 	useEffect(() => {
 		console.log("now working on", workingComp.type);
-	}, [workingComp]);
+	}, [workingComp.id]);
 
 	return <div className={styles["surgery-table"]}>SurgeryTable</div>;
 };

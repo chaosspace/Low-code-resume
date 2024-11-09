@@ -1,13 +1,50 @@
 .side-pane {
-	padding: 12px;
 	display: flex;
-	flex-direction: column;
 	gap: 8px;
-	background: #aaa;
+	background: #fff;
 
-	.item {
-		padding: 4px;
-		background: #ccc;
-		border-radius: 4px;
+	.title {
+		font-weight: 500;
+		font-size: 20px;
+	}
+
+	.materials {
+		padding: 6px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		background: #aaa;
+
+		.item {
+			padding: 4px;
+			background: #ccc;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.3s ease-out;
+
+			&:hover {
+				background-color: #eee;
+			}
+		}
+	}
+
+	.structure {
+		padding: 6px;
+		background: #aaa;
+
+		.container {
+			> div {
+				padding: 4px;
+				margin-top: 6px;
+				border-radius: 4px;
+				cursor: pointer;
+				background: #ccc;
+				transition: background-color 0.3s ease-out;
+
+				&:hover {
+					background-color: #eee;
+				}
+			}
+		}
 	}
 }
