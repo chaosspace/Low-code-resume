@@ -8,7 +8,7 @@
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"plop": "node ./src/scripts/entry.mjs"
+		"plop": "node ./scripts/entry.mjs"
 	},
 	"dependencies": {
 		"react": "^18.3.1",
