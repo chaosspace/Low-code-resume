@@ -1,15 +1,8 @@
-export async function generateUniqueHash() {
-	const timestamp = Date.now().toString();
-	const randomData = Math.random().toString(36).substring(2, 15);
-	const input = timestamp + randomData;
-
-	const encoder = new TextEncoder();
-	const data = encoder.encode(input);
-	const hashBuffer = await crypto.subtle.digest("SHA-1", data);
-
-	const hashArray = Array.from(new Uint8Array(hashBuffer));
-	const hashHex = hashArray
-		.map((byte) => byte.toString(16).padStart(2, "0"))
-		.join("");
-	return hashHex;
+export function generateUniqueId(): string {
+	const timestamp = Date.now(); // 获取当前时间戳，单位毫秒
+	const randomNum = Math.floor(Math.random() * 100); // 生成一个0到99之间的随机数
+	const uniqueId = ((timestamp % 100000000) + randomNum)
+		.toString()
+		.padStart(8, "0"); // 保证最终字符串长度为8位
+	return uniqueId;
 }

@@ -1,6 +1,7 @@
-import { useSyncExternalStore } from "react";
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import { TMaterialType } from "@/material";
+import { withSelectedSet } from "./middleWare";
 
 interface IBaseCompData {
 	type: string;
@@ -31,7 +32,17 @@ export interface IWorkTreeNode {
 	data: any;
 }
 
-export type Listener = () => void;
+interface Update {
+	update: (
+		action: (node: IWorkTreeNode) => void,
+		replace?: boolean,
+		id?: string
+	) => void;
+}
+
+export interface ITreeStructure extends Update {
+	root: IWorkTreeNode;
+}
 
 const Root: IWorkTreeNode = {
 	id: "Workspace",
@@ -40,55 +51,18 @@ const Root: IWorkTreeNode = {
 	sibling: null,
 	data: null,
 };
-const listeners = new Set<Listener>();
 
-function subscribe(listener: Listener) {
-	listeners.add(listener);
-
-	return () => {
-		listeners.delete(listener);
-	};
-}
-
-function flush() {
-	listeners.forEach((l) => {
-		l();
-	});
-}
-
-function update(action: (root: IWorkTreeNode) => void, id?: string) {
-	let targetNode = Root;
-	if (id) {
-		targetNode = findTreeNodeById(id)!;
-	}
-
-	action(targetNode);
-	flush();
-}
-
-export const useTreeStore = () => {
-	const tree = useSyncExternalStore(subscribe, () => Root);
-
-	return [tree, update] as const;
-};
-
-// store utils
-export const findTreeNodeById = (id: string): IWorkTreeNode | null => {
-	function dfs(id: string, node: IWorkTreeNode): IWorkTreeNode | null {
-		let final = null;
-		if (node.id === id) {
-			final = node;
-		} else {
-			for (const n of node.children) {
-				const t = dfs(id, n);
-				if (t) {
-					final = t;
-					break;
-				}
-			}
-		}
-		return final;
-	}
-
-	return dfs(id, Root);
-};
+/**
+ * 实现withSelectedSet，可以给set传递第三个参数id，这样action中的传入的node将是与id相等的node，如果没有则为root
+ * 使用immer来实现深层树更新
+ */
+export const useTreeStore = create<ITreeStructure>()(
+	immer(
+		withSelectedSet((set: any) => ({
+			root: Root,
+			update: (action: Update, replace?: boolean, id?: string) => {
+				set(action as any, replace, id);
+			},
+		}))
+	)
+);

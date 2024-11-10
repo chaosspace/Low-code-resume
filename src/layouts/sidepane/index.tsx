@@ -1,18 +1,43 @@
 import styles from "./sidePane.module.less";
-import { MaterialConfig } from "../../material";
+import { MaterialConfig, TMaterialType } from "../../material";
 import { IWorkTreeNode, useTreeStore, useWorkingStore } from "@/store";
-import { setupTree } from "@/utils/tree";
+import { createNode, findTreeNodeBySubId, setupTree } from "@/utils/tree";
 
 export const SidePane = () => {
-	const [tree, updateTree] = useTreeStore();
+	const treeStore = useTreeStore();
 	const { setWorkingComp, id: workingCompId } = useWorkingStore();
 
-	const hanldeMaterialClick = (nodeName: string) => {
-		updateTree(() => {
-			const a: IWorkTreeNode = 1 as any;
-			a;
-			console.log(nodeName, "clicked");
-		}, workingCompId);
+	const handleMaterialClick = (nodeName: TMaterialType) => {
+		treeStore.update(
+			(originalTree) => {
+				const node = createNode(nodeName, null);
+				originalTree.children.push(node);
+			},
+			false,
+			workingCompId
+		);
+	};
+
+	const handleWorkingNodeChange = (node: IWorkTreeNode) => {
+		setWorkingComp({ type: node.type, id: node.id });
+	};
+
+	const handleTreeNodeDelete = (id: string) => {
+		const supNode = findTreeNodeBySubId(treeStore.root, id);
+		if (!supNode) return;
+
+		// 如果删除的节点是working node, 将working node变为其父节点
+		if (workingCompId === id) {
+			handleWorkingNodeChange(supNode[0]);
+		}
+
+		treeStore.update(
+			(originalTree) => {
+				originalTree.children.splice(supNode[1], 1);
+			},
+			false,
+			supNode[0].id
+		);
 	};
 
 	return (
@@ -24,7 +49,7 @@ export const SidePane = () => {
 						<div
 							key={item.name}
 							className={styles["item"]}
-							onClick={() => hanldeMaterialClick(item.name)}
+							onClick={() => handleMaterialClick(item.name)}
 						>
 							{item.name}
 						</div>
@@ -34,7 +59,11 @@ export const SidePane = () => {
 			<div className={styles["structure"]}>
 				<div className={styles["title"]}>WorkTree结构</div>
 				<div className={styles["container"]}>
-					{setupTree(tree, { setWorkingComp, workingCompId })}
+					{setupTree(treeStore.root, {
+						handleWorkingNodeChange,
+						workingCompId,
+						handleTreeNodeDelete,
+					})}
 				</div>
 			</div>
 		</div>

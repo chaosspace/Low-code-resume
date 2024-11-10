@@ -6,6 +6,7 @@
 	.title {
 		font-weight: 500;
 		font-size: 20px;
+		text-align: center;
 	}
 
 	.materials {
@@ -40,9 +41,28 @@
 				cursor: pointer;
 				background: #ccc;
 				transition: background-color 0.3s ease-out;
+				text-align: center;
+				position: relative;
+
+				&.node-selected {
+					background: #77abff !important;
+				}
+
+				.node-delete {
+					position: absolute;
+					right: 4px;
+					top: 50%;
+					opacity: 0;
+					transform: translateY(-50%);
+					transition: opacity 0.3s ease-out;
+				}
 
 				&:hover {
 					background-color: #eee;
+
+					.node-delete {
+						opacity: 1;
+					}
 				}
 			}
 		}
